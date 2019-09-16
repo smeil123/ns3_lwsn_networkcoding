@@ -8,6 +8,6 @@ NS-3 오픈소스를 활용하여 시뮬레이션을 구축하였으며, 수정�
 * 모든 노드들과 규칙을 정해서 전송 실패하지 않도록 한다.
 * 전송할 데이터가 많은 경우 효율이 좋다
 * 전송할 데이터가 많이 없는 경우에도 무조건 일정시간을 기다려야한다
-<img src="./image/nc.jpg" width="70%" height="50%"></img>
+<img src="./image/nc.png" width="70%" height="50%"></img>
 ## 주요 코드
 * src/network/utils/simple-net-device.cc
