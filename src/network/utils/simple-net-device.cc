@@ -287,25 +287,6 @@ SimpleNetDevice::SetSideAddress(Address laddress, Address raddress){
   r_address=Mac48Address::ConvertFrom (raddress);
 }                  
 
-/*void
-SimpleNetDevice::ReceiveStart(Ptr<Packet> packet, uint16_t protocol,Mac48Address to, Mac48Address from)
-{
-  if(!end_flag){
-    int delay=Simulator::Now().GetSeconds();
-    int slot=0;
-    if(delay==0){
-      slot=0;
-    }
-    else{
-      slot=delay%timeslot;
-    }     
-    Simulator::Schedule(Seconds(timeslot-slot),&SimpleNetDevice::EndSchedule,this);
-    end_flag = true;
-  }
-
-  Simulator::Schedule(Second(1.0),&SimpleNetDevice::Receive,this,packet,protocol,to,from);
-}*/
-
 void
 SimpleNetDevice::Receive (Ptr<Packet> packet, uint16_t protocol,
                           Mac48Address to, Mac48Address from)
@@ -348,8 +329,6 @@ SimpleNetDevice::Receive (Ptr<Packet> packet, uint16_t protocol,
 
       if(!end_flag){
         int temp = 0;
-        /*int temp = Simulator::Now().GetSeconds();
-        slot=temp%timeslot;*/
         temp = Simulator::Now().GetSeconds()/timeslot;
         NS_LOG_FUNCTION("Sid " <<m_sid << "delay "<<timeslot-(Simulator::Now().GetSeconds()-temp*timeslot));
         Simulator::Schedule(Seconds(timeslot-(Simulator::Now().GetSeconds()-temp*timeslot)-0.1),&SimpleNetDevice::EndSchedule,this);
@@ -392,34 +371,9 @@ SimpleNetDevice::Receive (Ptr<Packet> packet, uint16_t protocol,
             NS_LOG_FUNCTION("SID : "<<receiveHeader.GetType());
           
           }
-
-        }
-
-        
+        }        
       }
     }
-  /*else if (to.IsBroadcast ())
-    {
-      packetType = NetDevice::PACKET_BROADCAST;
-    }
-  else if (to.IsGroup ())
-    {
-      packetType = NetDevice::PACKET_MULTICAST;
-    }
-  else 
-    {
-      packetType = NetDevice::PACKET_OTHERHOST;
-    }
-
-  if (packetType != NetDevice::PACKET_OTHERHOST)
-    {
-      m_rxCallback (this, packet, protocol, from);
-    }
-
-  if (!m_promiscCallback.IsNull ())
-    {
-      m_promiscCallback (this, packet, protocol, from, to, packetType);
-    }*/
 }
 
 void 
@@ -508,8 +462,8 @@ SimpleNetDevice::IsLinkUp (void) const
 void 
 SimpleNetDevice::AddLinkChangeCallback (Callback<void> callback)
 {
- NS_LOG_FUNCTION (this << &callback);
- m_linkChangeCallbacks.ConnectWithoutContext (callback);
+  NS_LOG_FUNCTION (this << &callback);
+  m_linkChangeCallbacks.ConnectWithoutContext (callback);
 }
 bool 
 SimpleNetDevice::IsBroadcast (void) const
@@ -607,7 +561,7 @@ SimpleNetDevice::decoding(Ptr<Packet> p)
   /*
     if(m_rxArray[]==0) -> no receive packet
   */
-NS_LOG_FUNCTION("Sid : "<<m_sid<<"Osid_1" << m_rxArray[tempheader.GetOsid()-1] <<"   Osid_2" <<m_rxArray[tempheader.GetOsid2()-1]);
+  NS_LOG_FUNCTION("Sid : "<<m_sid<<"Osid_1" << m_rxArray[tempheader.GetOsid()-1] <<"   Osid_2" <<m_rxArray[tempheader.GetOsid2()-1]);
   if(m_rxArray[tempheader.GetOsid()-1]>0){
     Ptr<Packet> packet = Create<Packet> (100);
     LwsnHeader sendHeader;
@@ -619,7 +573,7 @@ NS_LOG_FUNCTION("Sid : "<<m_sid<<"Osid_1" << m_rxArray[tempheader.GetOsid()-1] <
     sendHeader.SetStartTime(tempheader.GetStartTime2());
     sendHeader.SetE(1);
 
-  NS_LOG_FUNCTION("GetStartTime"<<tempheader.GetStartTime());
+    NS_LOG_FUNCTION("GetStartTime"<<tempheader.GetStartTime());
 
     packet->AddHeader(sendHeader);
 
@@ -637,7 +591,7 @@ NS_LOG_FUNCTION("Sid : "<<m_sid<<"Osid_1" << m_rxArray[tempheader.GetOsid()-1] <
     sendHeader.SetPsid(tempheader.GetPsid());
     sendHeader.SetStartTime(tempheader.GetStartTime());
     sendHeader.SetE(1);
-  NS_LOG_FUNCTION("GetStartTime"<<tempheader.GetStartTime());
+    NS_LOG_FUNCTION("GetStartTime"<<tempheader.GetStartTime());
 
     packet->AddHeader(sendHeader);
     NS_LOG_FUNCTION("Sid : "<<this->GetSid()<< "  packet decoding, get Osid -> "<<sendHeader.GetOsid());
@@ -873,18 +827,6 @@ SimpleNetDevice::ChannelSend(Ptr<Packet> p, uint16_t protocol, Mac48Address to, 
   m_channel->Send(p, protocol, to, from, this);
   Simulator::Schedule(Seconds(1.0),&SimpleNetDevice::SetSleep,this);
 
-/*  if(!end_flag){
-    int slot=0;
-    if(Simulator::Now().GetSeconds()==0){
-      slot=0;
-    }
-    else{
-      int temp = Simulator::Now().GetSeconds();
-      slot=temp%timeslot;
-    }     
-    Simulator::Schedule(Seconds(timeslot-slot),&SimpleNetDevice::EndSchedule,this);
-    end_flag = true;
-  }*/
   if(!end_flag){
     int temp = 0;
     temp = Simulator::Now().GetSeconds()/timeslot;
@@ -920,8 +862,6 @@ SimpleNetDevice::Print(){
 bool 
 SimpleNetDevice::Send (Ptr<Packet> packet, const Address& dest, uint16_t protocolNumber)
 {
-  //NS_LOG_FUNCTION (this << packet << dest << protocolNumber);
-  //std::cout<<"send"<<std::endl;
   return SendFrom (packet, m_address, dest, protocolNumber);
 }
 bool
@@ -965,7 +905,6 @@ SimpleNetDevice::SendFrom(Ptr<Packet> p, const Address& source, const Address& d
 bool
 SimpleNetDevice::OriginalTransmission (Ptr<Packet> p,bool header)
 { 
-  //std::cout<<this->GetSid()<<"sendFrom"<<std::endl;	
   NS_LOG_FUNCTION ("Sid" << m_sid );  
   if (p->GetSize () > GetMtu ())
     {
